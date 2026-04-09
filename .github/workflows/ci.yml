@@ -122,8 +122,7 @@ jobs:
         reporter: java-junit
         path: '**/target/*-reports/*.xml'
         fail-on-error: 'false'
-        only-summary: 'true'
-        use-actions-summary: 'true'
+        use-actions-summary: 'false'
 
     - name: Export test results to json file
       if: always() && steps.check_test_files.outputs.exists == 'true'
