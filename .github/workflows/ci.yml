@@ -101,6 +101,21 @@ jobs:
           rm -rf "$workDir/engine"
         fi
 
+    - name: Install ZAP
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zaproxy
+
+    - name: Start ZAP
+      run: |
+        zap.sh -daemon \
+          -host 127.0.0.1 \
+          -port 8090 \
+          -config api.disablekey=true &
+
+        # Wait for ZAP to start
+        sleep 20
+
     - name: Build with Maven
       run: mvn clean verify --batch-mode --fail-at-end ${{ inputs.mvnArgs }} ${{ secrets.mvnArgs }}
 
@@ -170,6 +185,12 @@ jobs:
           */target/testEngineOut.log
           */target/selenide/*
           */target/ivyEngine/deploy/*/*.deploymentLog
+
+    - name: Archive ZAP report
+      uses: actions/upload-artifact@v4
+      with:
+        name: zap-report
+        path: target/zap-report.*
 
     - name: Install CSpell
       run: |
